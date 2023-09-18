@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main() {
+  unsigned char armarios = 0; // mapa de bits p controlar os armarios
+  srand(time(NULL));
+
+  int escolha;
+  while (1) {
+  printf ("\nSeja bem vindo usuário\n");
+    printf("1 - ocupar armário\n");
+    printf("2 - liberar armário\n");
+    printf("3 - sair do menu de escolhas\n");
+    printf("escolha uma das opções: \n");
+    scanf ("%d", &escolha);
+
+    switch (escolha) {
+      case 1 : {
+        if (armarios == 255) {
+          printf("o número máximo de armários já foi utilizado\n");
+ } else {
+  int armario;
+  do {
+    armario = rand() % 8; // armário aleatório de 0 a 7
+  } while ((armarios >> armario)& 1); // verificando se o armario esta ocupado
+    armarios |= (1 << armario); // ocupa o armario definindo o bit correspodente p/ um
+    printf("armário %d está ocupado\n", armario);      
+ }
+   break;     
+}
+case 2: {
+  int armario;
+  printf("escreva o número do armário para ser liberado (0 a 7): ");
+  scanf("%d", &armario);
+  if(armario < 0 || armario > 7) {
+    printf("número de armário inválido");
+  } else if ((armarios >> armario)& 1){
+    armarios &= -(1 << armario); // libera o armário def o bit correspodente p/ 0
+    printf("armário %d liberado\n", armario);
+  } else{
+    printf("armário %d está vazio\n",armario);
+  }
+  break;
+   }
+  case 3: 
+      printf("saindo deste programa\n");
+      exit(0);
+      default:
+      printf("esta escolha é inválida\n");
+  }
+  }
+  return 0;
+}
