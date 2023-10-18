@@ -1,0 +1,407 @@
+01. #include <stdio.h>
+
+int main() {
+    int n1, n2, soma;
+    int *ptrsoma;
+
+    printf("primeiro  numero : ");
+    scanf("%d", &n1);
+
+    printf("segundo numero: ");
+    scanf("%d", &n2);
+
+    ptrsoma = &soma; 
+    *ptrsoma = n1 + n2; 
+
+    printf("o resultado da soma de %d e %d é %d\n", n1, n2, *ptrsoma);
+    printf("o endereço de memoria onde o valor esta armazenado: %p\n", ptrsoma);
+
+    return 0;
+}
+
+
+02.  #include <stdio.h>
+
+void trocadevalores(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int main() {
+    int n1, n2;
+
+    printf("primeiro numero: ");
+    scanf("%d", &n1);
+
+    printf("segundo numero: ");
+    scanf("%d", &n2);
+
+    printf("aqui estão os valores originais: n1 = %d, n2 = %d\n", n1, n2);
+
+    trocadevalores(&n1, &n2);
+
+    printf("os valores ficaram assim apos a troca: n1 = %d, n2 = %d\n", n1, n2);
+
+    return 0;
+}
+
+03.  #include <stdio.h>
+#include <stdbool.h>
+
+int main() {
+    int numero, menor;
+    int *ptr_menor = &menor;
+    bool primeiro = true; 
+    char comando[] = "quit"; 
+
+    printf("escreva o numero (ou \"%s\" para encerrar): ", comando);
+
+    while (1) {
+        char entrada[100];
+        fgets(entrada, sizeof(entrada), stdin);
+        entrada[strcspn(entrada, "\n")] = '\0'; 
+
+        if (strcmp(entrada, comando) == 0) {
+            if (primeiro) {
+                printf("nao foi fornecido nenhum valor.\n");
+            } else {
+                printf("este aqui é o menor valor fornecido: %d\n", menor);
+            }
+            break; 
+        }
+
+        if (sscanf(entrada, "%d", &numero) == 1) {
+            if (primeiro || numero < menor) {
+                menor = numero; 
+                primeiro = false; 
+            }
+        }
+
+        printf("escreva outro numero (ou \"%s\" para encerrar): ", comando);
+    }
+
+    return 0;
+}
+
+04. #include <stdio.h>
+
+int main(void) {
+  int n;
+  printf("defina o tamanho do vetor: ");
+  scanf("%d", &n);
+
+  int vetor_int[n];
+  printf("\nvetor de inteiros:\n");
+  for (int i = 0; i < n; i++){
+    printf("escreva um valor inteiro: ");
+    scanf("%d", &vetor_int[i]);
+    printf("o valor: %d , o endereço: %p\n", vetor_int[i], (void *)&vetor_int[i]);
+  }
+  float vetor_char[n];
+  printf("\nvetor de caracteres:\n");
+  for(int i = 0; i < n; i++){
+    printf("escreva um caractere: ");
+    scanf("%c", &vetor_char[i]);
+    printf("valor: %c, endereço: %p\n", vetor_char[i], (void *)&vetor_char[i]);
+  }
+  
+  return 0;
+}
+
+// pode-se observar que os endereços de meoria variam para cada elemtno do vetor, pois são armaezenados em locais diferentes na memoria.
+
+05. #include <stdio.h>
+
+int main() {
+  char string[100];
+  printf("escreva uma string: ");
+  fgets(string, sizeof(string), stdin);
+
+  string[strcspn(string, "\n")] = '\0';
+
+  char *ptr = string;
+  int tamanho = 0;
+
+  while (*ptr != '\0') {
+    tamanho++;
+    ptr++;
+  }
+  printf("o tamanho da string fornecida é: %d\n", tamanho);
+  
+  return 0;
+}
+
+
+06.  #include <stdio.h>
+
+void stringcopiar(char *destino, const char *origem)  {
+  while (*origem != '\0') {
+    *destino = *origem;
+    destino++;
+    origem++;
+  }
+  *destino = '\0';
+}
+
+int main() {
+  char origem[] = "seja bem vindo(a)";
+  char destino[20];
+
+  stringcopiar(destino, origem);
+
+  printf("a string de origem: %s\n", origem);
+  printf("a string de destino: %s\n", destino);
+  
+  return 0;
+}
+
+07.  #include <stdio.h>
+#include <string.h>
+
+void stringsconcatenar(char *destino, const char *origem) {
+  while (*destino != '\0') {
+    destino++;
+  }
+
+  while (*origem != '\0'){
+    *destino = *origem;
+    destino++;
+    origem++;
+  }
+
+  *destino = '\0';
+}
+
+int main() {
+  char string1[100] = "hello, ";
+  char string2[] = "world!";  
+  stringsconcatenar(string1, string2);
+
+  printf("string concatenada: %s\n", string1);
+  
+  return 0;
+}
+
+08.  #include <stdio.h>
+
+char buscarcaractere(const char *string, char alvo){
+  while (*string != '\0'){
+    if (*string == alvo) {
+      return (char *)string;
+    }
+    string++;
+  }
+  return NULL;
+}
+
+int main() {
+  char string[] = "hello, world!";
+  char caracterebuscado = 'o';
+
+  char *resultado = buscarcaractere(string, caracterebuscado);
+
+  if (resultado != NULL) {
+    printf("o caractere '%c' foi encontrado na posição: %ld\n", caracterebuscado, resultado - string);
+  } else {
+    printf("o caractere '%c' não foi encontrado na string.\n", caracterebuscado);
+  }
+   
+  return 0;
+}
+
+
+09.  #include <stdio.h>
+
+int main() {
+    int tamanho;
+    printf("tamanho do array: ");
+    scanf("%d", &tamanho);
+
+    int array[tamanho];
+    printf("elementos presentes no array:\n");
+
+    for (int i = 0; i < tamanho; i++) {
+        scanf("%d", &array[i]);
+    }
+    int *ptr;
+    int temp;
+
+    for (int i = 0; i < tamanho - 1; i++) {
+        for (int j = 0; j < tamanho - i - 1; j++) {
+            if (*(array + j) > *(array + j + 1)) {
+                temp = *(array + j);
+                *(array + j) = *(array + j + 1);
+                *(array + j + 1) = temp;
+            }
+        }
+    }
+
+    printf("assim fica o array ordenado:\n");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", *(array + i));
+    }
+
+    return 0;
+}
+
+
+10.  #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main() {
+    int N; 
+    int *X, *F;
+    int i;
+    printf("escreva aqui o tamanho desejado do vetor (N): ");
+    scanf("%d", &N);
+    X = (int *)malloc(N * sizeof(int));
+    F = (int *)calloc(N, sizeof(int)); 
+    srand(time(NULL));
+
+    for (i = 0; i < N; i++) {
+        X[i] = rand() % N;
+    }
+
+    for (i = 0; i < N; i++) {
+        F[X[i]]++;
+    }
+
+    printf("X = [");
+    for (i = 0; i < N; i++) {
+        printf("%d", X[i]);
+        if (i < N - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+
+    printf("F = [");
+    for (i = 0; i < N; i++) {
+        printf("%d", F[i]);
+        if (i < N - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    free(X);
+    free(F);
+
+    return 0;
+}
+
+11.  #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main() {
+    int N;
+    int *X, *Y; 
+    int **M; 
+    int i, j;
+
+    printf("insira os tamanhos dos vetores e da matriz, respectivamente (N): ");
+    scanf("%d", &N);
+
+    X = (int *)malloc(N * sizeof(int));
+    Y = (int *)malloc(N * sizeof(int));
+    srand(time(NULL));
+    for (i = 0; i < N; i++) {
+        X[i] = rand() % N;
+        Y[i] = rand() % N;
+    }
+    M = (int **)malloc(N * sizeof(int *));
+    for (i = 0; i < N; i++) {
+        M[i] = (int *)calloc(N, sizeof(int)); 
+    }
+
+    for (i = 0; i < N; i++) {
+        M[X[i]][Y[i]]++;
+    }
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            printf("%d ", M[i][j]);
+        }
+        printf("\n");
+    }
+    free(X);
+    free(Y);
+    for (i = 0; i < N; i++) {
+        free(M[i]);
+    }
+    free(M);
+
+    return 0;
+}
+
+
+12.  #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int main() {
+    int N; 
+    int *X, *Y; 
+    int **M; 
+    int i, j, r;
+    printf("insira aqui os tamanhos dos vetores e da matriz, respectivamente (N): ");
+    scanf("%d", &N);
+    X = (int *)malloc(N * sizeof(int));
+    Y = (int *)malloc(N * sizeof(int));
+    srand(time(NULL));
+    for (i = 0; i < N; i++) {
+        X[i] = rand() % N;
+    }
+    M = (int **)malloc(N * sizeof(int *));
+    for (i = 0; i < N; i++) {
+        M[i] = (int *)calloc(N, sizeof(int)); 
+    }
+    for (i = 0; i < N; i++) {
+        r = rand() % 10;
+        if (r > 9) {
+            r = 9;
+        }
+
+        switch (r) {
+            case 0:
+            case 1:
+            case 2:
+                Y[i] = X[i];
+                break;
+            case 3:
+            case 4:
+                Y[i] = (i > 0) ? X[i - 1] : X[i];
+                break;
+            case 5:
+            case 6:
+                Y[i] = (i < N - 1) ? X[i + 1] : X[i];
+                break;
+            case 7:
+                Y[i] = (i > 1) ? X[i - 2] : X[i];
+                break;
+            case 8:
+            case 9:
+                Y[i] = (i < N - 2) ? X[i + 2] : X[i];
+                break;
+        }
+    }
+    for (i = 0; i < N; i++) {
+        M[X[i]][Y[i]]++;
+    }
+    for (i = 0; i < N; i++) {
+        for (j = 0; j < N; j++) {
+            printf("%d ", M[i][j]);
+        }
+        printf("\n");
+    }
+    free(X);
+    free(Y);
+
+    for (i = 0; i < N; i++) {
+        free(M[i]);
+    }
+    free(M);
+
+    return 0;
+}
