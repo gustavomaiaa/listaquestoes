@@ -1,0 +1,388 @@
+01)   #include <stdio.h>
+
+#define vetor_tam 15
+
+int main() {
+  float vetor [vetor_tam];
+  float menor, maior;
+
+  printf("escreva os %d elementos do vetor:\n",vetor_tam);
+  for (int i = 0; i<vetor_tam; i++) {
+    printf("elemento %d: ", i + 1);
+    scanf("%f", &vetor[i]);
+  }
+  menor = vetor[0];
+  maior = vetor[0];
+
+   for (int i = 0; i<vetor_tam; i++){
+     if (vetor[i] < menor){
+       menor = vetor[i];
+     }
+     if(vetor[i] > maior) {
+       maior = vetor[i];
+     }
+   }
+  float soma = menor + maior;
+  printf("o resultado da soma do maior e menor elemento desse vetor é: %.2f\n", soma);
+
+  
+  return 0;
+}
+
+02)  #include <stdio.h>
+#include <stdbool.h>
+
+#define max_size 100
+
+int main() {
+  char inputstring [max_size];
+  char targetchar;
+
+  printf("escreva uma string: ");
+  fgets(inputstring, sizeof(inputstring),stdin);
+
+  printf("digite um caractere p/ procurar: ");
+  scanf(" %c", &targetchar);
+
+  //verifica se o caractere esta presente na string
+  bool encontrado = false;
+  for (int i = 0; inputstring[i] != '\0'; i++) {
+    if (inputstring[i] == targetchar) {
+      encontrado = true;
+      break;
+    }
+  }
+
+  //exibe o resultado
+  if(encontrado) {
+    printf("o caractere '%c' foi encontrado na string.\n", targetchar);
+  } else{
+    printf("o caractere '%c' não foi encontrado na string.\n", targetchar);
+  }
+  return 0;
+}
+
+03)  #include <stdio.h>
+#define max_size 100
+//tamanho maximo da matriz
+
+int main() {
+ char inputstring[max_size];
+
+  printf("digite aqui uma string(combinação de caracteres aleatórios): ");
+  fgets(inputstring, sizeof(inputstring), stdin);
+
+  int contador = 0;
+  for (int i = 0; inputstring[i] != '\0'; i++) {
+    if (inputstring[i] != '\n'){
+      contador++;
+    }
+  }
+  printf("a quantidade de caracteres presentes na string é: %d\n", contador);
+  
+  return 0;
+}
+
+
+04)   #include <stdio.h>
+#include <string.h>
+
+#define max_size 100
+
+int main() {
+  char str1 [max_size], str2[max_size];
+
+  printf("escreva a primeira string (combinação aleatória de caracteres): ");
+  scanf("%s", str1);
+
+  printf("escreva a segunda string (combinação aleatória de caracteres): ");
+  scanf("%s", str2);
+
+  if (strcmp(str1,str2) == 0){
+    printf("as strings são iguais (usando strcmp()).\n");
+  } else {
+    printf("as strings são diferentes(usandostrcmp()).\n");
+  }
+    int i = 0;
+    int igualdade = 1;
+
+    while (str1[i] != '\0' || str2[i] !='\0') {
+      if (str1[i] != str2[i]){
+        igualdade = 0;
+        break;
+      }
+      i++;
+    }
+  if (igualdade) {
+    printf("as strings são iguais (sem strcmp()).\n");
+  } else {
+    printf("as strings são diferentes (sem strcmp()).\n");
+  }
+  return 0;
+}
+
+
+05)   #include <stdio.h>
+#include <string.h>
+
+#define max_size 100
+
+int main() {
+  char str1[max_size], str2[max_size], concatenado[max_size * 2];
+  printf("escreva a primeira string: ");
+  scanf("%s", str1);
+
+  printf("escreva a segunda string: ");
+  scanf("%s", str2);
+
+  strcpy(concatenado, str1); // copia str1 p/ concatenado
+  strcat(concatenado,str2); // concatena str2 e concatenado
+
+  printf("concatenadas (usando strcat()): %s\n", concatenado);
+
+  int i = 0, j = 0;
+
+  while (str1[i] != '\0') {
+    concatenado[i] = str1[i];
+    i++;
+  }
+  while (str2[j] != '\0'){
+    concatenado[i + j] = str2[j];
+    j++;
+  }
+
+  concatenado[i + j] = '\0'; // add o caractere nulo p/ terminar a string
+
+  printf("concatenadas (sem strcat()): %s\n", concatenado);
+  return 0;
+}
+
+
+06)   #include <stdio.h>
+#include <string.h>
+
+#define maxtamanho 100
+
+int main() {
+  char string [maxtamanho];
+  
+  printf("escreva uma string: ");
+  fgets(string, maxtamanho, stdin);
+
+  int comprimento = strlen(string);
+
+  printf(" a string invertida: ");
+  for (int i = comprimento - 1; i >= 0; i--) {
+    printf("%c", string[i]);
+  }
+  printf("\n");
+  
+  return 0;
+}
+
+
+07)   #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define vetor_tam 3
+
+double mediageo (int vetor[], int tamanho) {
+  double produto = 1.0;
+  for (int i = 0; i < tamanho; i++) {
+    produto *= vetor [i];
+  }
+  return pow(produto, 1.0 / tamanho);
+}
+
+int main() {
+  int vetor[vetor_tam];
+  int soma = 0;
+
+  for (int i = 0; i < vetor_tam; i++) {
+    vetor[i] = rand() % 20; // gera um numero aleatorio entre 0 e 19
+      soma += vetor[i];
+  }
+
+  double mediaarit = (double)soma / vetor_tam;
+  double mediaGeom = mediageo(vetor, vetor_tam);
+
+  printf(" números que foram gerados: ");
+  for (int i = 0; i < vetor_tam; i++) {
+    if(i != 0){
+      printf(",");
+    }
+    printf("%d", vetor[i]);
+  }
+  printf("\n");
+  printf(" a média aritmética é: %.2lf\n",mediaarit);
+  printf(" a média geométrica é: %.2lf\n", mediaGeom);
+  
+  return 0;
+}
+
+
+08)   #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define TAMANHO_VETOR 100
+
+// Função para gerar números inteiros pseudoaleatórios no intervalo [min, max]
+int randomInt(int min, int max) {
+    return min + rand() % (max - min + 1);
+}
+
+// Função para trocar dois elementos em um vetor
+void trocar(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Função de ordenação por seleção
+void selecaoSort(int vetor[], int tamanho) {
+    for (int i = 0; i < tamanho - 1; i++) {
+        int minIndex = i;
+        for (int j = i + 1; j < tamanho; j++) {
+            if (vetor[j] < vetor[minIndex]) {
+                minIndex = j;
+            }
+        }
+        if (minIndex != i) {
+            trocar(&vetor[i], &vetor[minIndex]);
+        }
+    }
+}
+
+// Função de ordenação bubble sort
+void bubbleSort(int vetor[], int tamanho) {
+    for (int i = 0; i < tamanho - 1; i++) {
+        for (int j = 0; j < tamanho - i - 1; j++) {
+            if (vetor[j] > vetor[j + 1]) {
+                trocar(&vetor[j], &vetor[j + 1]);
+            }
+        }
+    }
+}
+
+int main() {
+    int vetor[TAMANHO_VETOR];
+    int minIntervalo, maxIntervalo;
+
+    printf("Digite o valor mínimo do intervalo: ");
+    scanf("%d", &minIntervalo);
+    printf("Digite o valor máximo do intervalo: ");
+    scanf("%d", &maxIntervalo);
+
+    // Inicialize o gerador de números aleatórios com base no tempo
+    srand(time(NULL));
+
+    // Preencha o vetor com números inteiros pseudoaleatórios no intervalo [minIntervalo, maxIntervalo]
+    for (int i = 0; i < TAMANHO_VETOR; i++) {
+        vetor[i] = randomInt(minIntervalo, maxIntervalo);
+    }
+
+    // Copie o vetor original para uso com os dois métodos de ordenação
+    int vetorOrdenadoSelecao[TAMANHO_VETOR];
+    int vetorOrdenadoBubble[TAMANHO_VETOR];
+    for (int i = 0; i < TAMANHO_VETOR; i++) {
+        vetorOrdenadoSelecao[i] = vetor[i];
+        vetorOrdenadoBubble[i] = vetor[i];
+    }
+
+    // Ordenação por seleção
+    selecaoSort(vetorOrdenadoSelecao, TAMANHO_VETOR);
+
+    // Ordenação bubble sort
+    bubbleSort(vetorOrdenadoBubble, TAMANHO_VETOR);
+
+    printf("\nVetor original:\n");
+    for (int i = 0; i < TAMANHO_VETOR; i++) {
+        printf("%d ", vetor[i]);
+    }
+
+    printf("\n\nVetor ordenado (por seleção):\n");
+    for (int i = 0; i < TAMANHO_VETOR; i++) {
+        printf("%d ", vetorOrdenadoSelecao[i]);
+    }
+
+    printf("\n\nVetor ordenado (bubble sort):\n");
+    for (int i = 0; i < TAMANHO_VETOR; i++) {
+        printf("%d ", vetorOrdenadoBubble[i]);
+    }
+
+    printf("\n");
+
+    return 0;
+}
+
+
+
+09)   #include <stdio.h>
+
+#define TAMANHO_MATRIZ 3
+
+int main() {
+    int matriz[TAMANHO_MATRIZ][TAMANHO_MATRIZ];
+
+    // Solicitar ao usuário para preencher a matriz
+    printf("Digite os elementos da matriz %dx%d:\n", TAMANHO_MATRIZ, TAMANHO_MATRIZ);
+    for (int i = 0; i < TAMANHO_MATRIZ; i++) {
+        for (int j = 0; j < TAMANHO_MATRIZ; j++) {
+            printf("Elemento [%d][%d]: ", i, j);
+            scanf("%d", &matriz[i][j]);
+        }
+    }
+
+    // Apresentar os elementos da diagonal principal
+    printf("Elementos da diagonal principal:\n");
+    for (int i = 0; i < TAMANHO_MATRIZ; i++) {
+        printf("%d ", matriz[i][i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+
+
+
+10)   #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define TAMANHO_MATRIZ 3 // Altere para o tamanho desejado da matriz
+
+int main() {
+    int matriz[TAMANHO_MATRIZ][TAMANHO_MATRIZ];
+    int x;
+    int contador = 0;
+
+    // Inicialize o gerador de números aleatórios com base no tempo
+    srand(time(NULL));
+
+    // Preencha a matriz com números inteiros aleatórios
+    for (int i = 0; i < TAMANHO_MATRIZ; i++) {
+        for (int j = 0; j < TAMANHO_MATRIZ; j++) {
+            matriz[i][j] = rand() % 100; // Números aleatórios entre 0 e 99
+        }
+    }
+
+    // Solicite ao usuário um valor inteiro "x"
+    printf("Digite um valor inteiro x: ");
+    scanf("%d", &x);
+
+    // Verifique quantas vezes "x" aparece na matriz
+    for (int i = 0; i < TAMANHO_MATRIZ; i++) {
+        for (int j = 0; j < TAMANHO_MATRIZ; j++) {
+            if (matriz[i][j] == x) {
+                contador++;
+            }
+        }
+    }
+
+    // Apresente o resultado
+    printf("O valor %d aparece %d vezes na matriz.\n", x, contador);
+
+    return 0;
+}
