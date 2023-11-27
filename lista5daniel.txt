@@ -1,0 +1,742 @@
+01. #include <stdio.h>
+
+//  realizar a soma
+void soma(float valor1, float valor2, float *resultado) {
+    *resultado = valor1 + valor2;
+}
+
+//  realizar a multiplicação
+void multiplicacao(float valor1, float valor2, float *resultado) {
+    *resultado = valor1 * valor2;
+}
+
+int main() {
+    float valor1, valor2, resultado;
+    char operacao;
+
+    // recebe os valores e a operação por linha de execução
+    printf("primeiro valor: ");
+    scanf("%f", &valor1);
+
+    printf("segundo valor: ");
+    scanf("%f", &valor2);
+
+    printf("escolha a operacao (s para soma, m para multiplicacao): ");
+    scanf(" %c", &operacao);
+
+    // verifica o código de operação e chama a função correspondente
+    switch (operacao) {
+        case 's':
+            soma(valor1, valor2, &resultado);
+            printf("soma: %.2f\n", resultado);
+            break;
+        case 'm':
+            multiplicacao(valor1, valor2, &resultado);
+            printf("multiplicacao: %.2f\n", resultado);
+            break;
+        default:
+            printf("essa operação é inválida.\n");
+    }
+
+    return 0;
+}
+
+02.  #include <stdio.h>
+#include <stdlib.h>
+
+// Função para encontrar o endereço do menor elemento em um vetor
+int *enderecoMenorElemento(int *vetor, int tamanho) {
+    if (tamanho <= 0 || vetor == NULL) {
+        return NULL;
+    }
+
+    int *enderecoMenor = &vetor[0];
+
+    for (int i = 1; i < tamanho; i++) {
+        if (vetor[i] < *enderecoMenor) {
+            enderecoMenor = &vetor[i];
+        }
+    }
+
+    return enderecoMenor;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Uso: %s <quantidade de elementos>\n", argv[0]);
+        return 1;
+    }
+
+    int tamanho = atoi(argv[1]);
+
+    if (tamanho <= 0) {
+        printf("Por favor, forneça uma quantidade válida de elementos.\n");
+        return 1;
+    }
+
+    // Aloca dinamicamente o vetor com base na quantidade fornecida
+    int *vetor = (int *)malloc(tamanho * sizeof(int));
+
+    if (vetor == NULL) {
+        printf("Erro ao alocar memória para o vetor.\n");
+        return 1;
+    }
+
+    // Gera o vetor de inteiros aleatórios
+    for (int i = 0; i < tamanho; i++) {
+        vetor[i] = rand() % 100;  // Números aleatórios de 0 a 99
+    }
+
+    // Exibe o vetor gerado
+    printf("Vetor gerado: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", vetor[i]);
+    }
+    printf("\n");
+
+    // Encontra o endereço do menor elemento
+    int *enderecoMenor = enderecoMenorElemento(vetor, tamanho);
+
+    // Exibe o resultado
+    if (enderecoMenor != NULL) {
+        printf("Endereço do menor elemento: %p\n", (void *)enderecoMenor);
+    } else {
+        printf("Não foi possível encontrar o endereço do menor elemento.\n");
+    }
+
+    // Libera a memória alocada para o vetor
+    free(vetor);
+
+    return 0;
+}
+
+
+03. #include <stdio.h>
+#include <stdlib.h>
+
+// Estrutura para armazenar os endereços do menor e do maior elemento
+struct Enderecos {
+    int *menor;
+    int *maior;
+};
+
+// Função para encontrar os endereços do menor e do maior elemento em um vetor
+struct Enderecos encontrarEnderecosMinMax(int *vetor, int tamanho) {
+    struct Enderecos enderecos = {&vetor[0], &vetor[0]};  // Inicializa com o primeiro elemento
+
+    for (int i = 1; i < tamanho; i++) {
+        if (vetor[i] < *(enderecos.menor)) {
+            enderecos.menor = &vetor[i];
+        } else if (vetor[i] > *(enderecos.maior)) {
+            enderecos.maior = &vetor[i];
+        }
+    }
+
+    return enderecos;
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Uso: %s <quantidade de elementos>\n", argv[0]);
+        return 1;
+    }
+
+    int tamanho = atoi(argv[1]);
+
+    if (tamanho <= 0) {
+        printf("Por favor, forneça uma quantidade válida de elementos.\n");
+        return 1;
+    }
+
+    // Aloca dinamicamente o vetor com base na quantidade fornecida
+    int *vetor = (int *)malloc(tamanho * sizeof(int));
+
+    if (vetor == NULL) {
+        printf("Erro ao alocar memória para o vetor.\n");
+        return 1;
+    }
+
+    // Gera o vetor de inteiros aleatórios
+    for (int i = 0; i < tamanho; i++) {
+        vetor[i] = rand() % 100;  // Números aleatórios de 0 a 99
+    }
+
+    // Exibe o vetor gerado
+    printf("Vetor gerado: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", vetor[i]);
+    }
+    printf("\n");
+
+    // Encontra os endereços do menor e do maior elemento
+    struct Enderecos enderecos = encontrarEnderecosMinMax(vetor, tamanho);
+
+    // Exibe os resultados
+    printf("Endereço do menor elemento: %p\n", (void *)enderecos.menor);
+    printf("Endereço do maior elemento: %p\n", (void *)enderecos.maior);
+
+    // Libera a memória alocada para o vetor
+    free(vetor);
+
+    return 0;
+}
+
+
+04.  #include <stdio.h>
+
+// Função para encontrar o valor mínimo em um vetor
+int encontrarMinimo(int *vetor, int tamanho) {
+    int minimo = vetor[0];
+    for (int i = 1; i < tamanho; i++) {
+        if (vetor[i] < minimo) {
+            minimo = vetor[i];
+        }
+    }
+    return minimo;
+}
+
+// Função para encontrar o valor máximo em um vetor
+int encontrarMaximo(int *vetor, int tamanho) {
+    int maximo = vetor[0];
+    for (int i = 1; i < tamanho; i++) {
+        if (vetor[i] > maximo) {
+            maximo = vetor[i];
+        }
+    }
+    return maximo;
+}
+
+// Função para realizar a normalização min-max em um vetor
+void normalizarMinMax(int *vetor, int tamanho) {
+    int minimo = encontrarMinimo(vetor, tamanho);
+    int maximo = encontrarMaximo(vetor, tamanho);
+
+    for (int i = 0; i < tamanho; i++) {
+        vetor[i] = (vetor[i] - minimo) / (float)(maximo - minimo);
+    }
+}
+
+int main() {
+    int tamanho;
+
+    printf("Digite o tamanho do vetor: ");
+    scanf("%d", &tamanho);
+
+    // Aloca dinamicamente o vetor com base no tamanho fornecido
+    int *vetor = (int *)malloc(tamanho * sizeof(int));
+
+    if (vetor == NULL) {
+        printf("Erro ao alocar memória para o vetor.\n");
+        return 1;
+    }
+
+    // Preenche o vetor com valores
+    printf("Digite os elementos do vetor:\n");
+    for (int i = 0; i < tamanho; i++) {
+        scanf("%d", &vetor[i]);
+    }
+
+    // Normaliza o vetor usando a normalização min-max
+    normalizarMinMax(vetor, tamanho);
+
+    // Exibe o vetor normalizado
+    printf("Vetor normalizado (min-max):\n");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%.2f ", (float)vetor[i]);
+    }
+    printf("\n");
+
+    // Libera a memória alocada para o vetor
+    free(vetor);
+
+    return 0;
+}
+
+
+05.  #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// soma dos elementos de um vetor float
+float somarElementos(float *vetor, int tamanho) {
+    float soma = 0.0;
+    for (int i = 0; i < tamanho; i++) {
+        soma += vetor[i];
+    }
+    return soma;
+}
+
+int main(int argc, char *argv[]) {
+    // verifica se a quantidade de elementos foi fornecida
+    if (argc != 2) {
+        printf("Uso: %s <quantidade de elementos>\n", argv[0]);
+        return 1;
+    }
+
+    // elementos p/ inteiro
+    int tamanho = atoi(argv[1]);
+
+    // alocação dinamica do vetor c base nos elementos fornecidos
+    float *vetor = (float *)malloc(tamanho * sizeof(float));
+
+    // verifica se a alocação foi bem-sucedida
+    if (vetor == NULL) {
+        printf("Erro ao alocar memória para o vetor.\n");
+        return 1;
+    }
+
+    // inicializa o gerador de números pseudo-aleatórios com o tempo atual
+    srand(time(NULL));
+
+    // preenche o vetor com valores pseudo-aleatórios
+    for (int i = 0; i < tamanho; i++) {
+        vetor[i] = (float)rand() / RAND_MAX; // Números aleatórios entre 0 e 1
+    }
+
+    // exibe o vetor gerado
+    printf("Vetor gerado: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%.2f ", vetor[i]);
+    }
+    printf("\n");
+
+    // calcula e exibe a soma dos elementos do vetor
+    float soma = somarElementos(vetor, tamanho);
+    printf("Soma dos elementos: %.2f\n", soma);
+
+    // libera a memória alocada para o vetor
+    free(vetor);
+
+    return 0;
+}
+
+
+06.  #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// comparação de inteiros (usada para qsort)
+int compararInteiros(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+// calcular a média de um vetor de inteiros
+float calcularMedia(int *vetor, int tamanho) {
+    int soma = 0;
+    for (int i = 0; i < tamanho; i++) {
+        soma += vetor[i];
+    }
+    return (float)soma / tamanho;
+}
+
+// calcular a mediana de um vetor de inteiros
+float calcularMediana(int *vetor, int tamanho) {
+    // ordena o vetor
+    qsort(vetor, tamanho, sizeof(int), compararInteiros);
+
+    // calcula a mediana
+    if (tamanho % 2 == 0) {
+        // par, retorna a média dos dois valores centrais
+        return (float)(vetor[tamanho / 2 - 1] + vetor[tamanho / 2]) / 2;
+    } else {
+        // ímpar, retorna o valor central
+        return (float)vetor[tamanho / 2];
+    }
+}
+
+// calcular a moda de um vetor de inteiros
+void calcularModa(int *vetor, int tamanho) {
+    // ordena o vetor
+    qsort(vetor, tamanho, sizeof(int), compararInteiros);
+
+    int contagemAtual = 1;
+    int contagemMaxima = 1;
+    int moda = vetor[0];
+
+    for (int i = 1; i < tamanho; i++) {
+        if (vetor[i] == vetor[i - 1]) {
+            contagemAtual++;
+        } else {
+            contagemAtual = 1;
+        }
+
+        if (contagemAtual > contagemMaxima) {
+            contagemMaxima = contagemAtual;
+            moda = vetor[i];
+        }
+    }
+
+    printf("Moda: %d\n", moda);
+}
+
+int main() {
+    // inicializa o gerador de números pseudo-aleatórios com o tempo atual
+    srand(time(NULL));
+
+    // gera um vetor de inteiros aleatórios
+    int tamanho = 10; // Tamanho do vetor (pode ser alterado)
+    int *vetor = (int *)malloc(tamanho * sizeof(int));
+
+    if (vetor == NULL) {
+        printf("Erro ao alocar memória para o vetor.\n");
+        return 1;
+    }
+
+    // preenche o vetor com valores pseudo-aleatórios
+    for (int i = 0; i < tamanho; i++) {
+        vetor[i] = rand() % 10; // números aleatórios de 0 a 9 (pode ser alterado)
+    }
+
+    // exibe o vetor gerado
+    printf("Vetor gerado: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", vetor[i]);
+    }
+    printf("\n");
+
+    // calcula e exibe a média, a mediana e a moda
+    float media = calcularMedia(vetor, tamanho);
+    float mediana = calcularMediana(vetor, tamanho);
+
+    printf("Média: %.2f\n", media);
+    printf("Mediana: %.2f\n", mediana);
+    printf("Moda: ");
+    calcularModa(vetor, tamanho);
+
+    // libera a memória alocada para o vetor
+    free(vetor);
+
+    return 0;
+}
+
+07.  #include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+
+// erro médio quadrático entre dois vetores
+float calcularEMQ(int *vetorA, int *vetorB, int tamanho) {
+    float somaQuadradosDiferencas = 0.0;
+
+    for (int i = 0; i < tamanho; i++) {
+        float diferenca = vetorA[i] - vetorB[i];
+        somaQuadradosDiferencas += diferenca * diferenca;
+    }
+
+    return sqrt(somaQuadradosDiferencas / tamanho);
+}
+
+int main() {
+    // inicializa o gerador de números pseudo-aleatórios com o tempo atual
+    srand(time(NULL));
+
+    // dimensão dos vetores
+    int tamanho = 10; // Pode ser alterado conforme necessário
+
+    // aloca dinamicamente os vetores A e B
+    int *vetorA = (int *)malloc(tamanho * sizeof(int));
+    int *vetorB = (int *)malloc(tamanho * sizeof(int));
+
+    if (vetorA == NULL || vetorB == NULL) {
+        printf("Erro ao alocar memória para os vetores.\n");
+        return 1;
+    }
+
+    // preenche os vetores com valores pseudo-aleatórios
+    for (int i = 0; i < tamanho; i++) {
+        vetorA[i] = rand() % 100; // Números aleatórios de 0 a 99
+        vetorB[i] = rand() % 100;
+    }
+
+    // exibe os vetores gerados
+    printf("Vetor A: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", vetorA[i]);
+    }
+    printf("\n");
+
+    printf("Vetor B: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", vetorB[i]);
+    }
+    printf("\n");
+
+    // calcula e exibe o erro médio quadrático
+    float emq = calcularEMQ(vetorA, vetorB, tamanho);
+    printf("Erro Médio Quadrático: %.2f\n", emq);
+
+    // libera a memória alocada para os vetores
+    free(vetorA);
+    free(vetorB);
+
+    return 0;
+}
+
+08. #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// gerar uma matriz aleatória com dimensões especificadas
+int **gerarMatriz(int linhas, int colunas) {
+    int **matriz = (int **)malloc(linhas * sizeof(int *));
+    for (int i = 0; i < linhas; i++) {
+        matriz[i] = (int *)malloc(colunas * sizeof(int));
+    }
+
+    // preenche a matriz com valores pseudo-aleatórios entre 0 e 100
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            matriz[i][j] = rand() % 101; // Números aleatórios de 0 a 100
+        }
+    }
+
+    return matriz;
+}
+
+// binarizar os elementos da matriz com base em um limiar t
+int **binarizarMatriz(int **matriz, int linhas, int colunas, int limiar) {
+    int **matrizBinarizada = (int **)malloc(linhas * sizeof(int *));
+    for (int i = 0; i < linhas; i++) {
+        matrizBinarizada[i] = (int *)malloc(colunas * sizeof(int));
+    }
+
+    // binariza os elementos da matriz com base no limiar t
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            matrizBinarizada[i][j] = (matriz[i][j] > limiar) ? 1 : 0;
+        }
+    }
+
+    return matrizBinarizada;
+}
+
+// exibir uma matriz
+void exibirMatriz(int **matriz, int linhas, int colunas) {
+    for (int i = 0; i < linhas; i++) {
+        for (int j = 0; j < colunas; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// liberar a memória alocada para uma matriz
+void liberarMatriz(int **matriz, int linhas) {
+    for (int i = 0; i < linhas; i++) {
+        free(matriz[i]);
+    }
+    free(matriz);
+}
+
+int main() {
+    // inicializa o gerador de números pseudo-aleatórios com o tempo atual
+    srand(time(NULL));
+
+    // obtém as dimensões da matriz em tempo de execução
+    int linhas, colunas;
+    printf("Digite o número de linhas da matriz: ");
+    scanf("%d", &linhas);
+
+    printf("Digite o número de colunas da matriz: ");
+    scanf("%d", &colunas);
+
+    // obtém o limiar t
+    int limiar;
+    printf("Digite o limiar t: ");
+    scanf("%d", &limiar);
+
+    // gera a matriz M aleatoriamente
+    int **matrizM = gerarMatriz(linhas, colunas);
+
+    // binariza os elementos da matriz M para criar a matriz S
+    int **matrizS = binarizarMatriz(matrizM, linhas, colunas, limiar);
+
+    // exibe as matrizes geradas
+    printf("\nMatriz M:\n");
+    exibirMatriz(matrizM, linhas, colunas);
+
+    printf("\nMatriz S (binarizada com limiar %d):\n", limiar);
+    exibirMatriz(matrizS, linhas, colunas);
+
+    // libera a memória alocada para as matrizes
+    liberarMatriz(matrizM, linhas);
+    liberarMatriz(matrizS, linhas);
+
+    return 0;
+}
+
+09.  #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// gerar uma matriz N x N com valores aleatórios
+int **gerarMatriz(int N) {
+    int **matriz = (int **)malloc(N * sizeof(int *));
+    for (int i = 0; i < N; i++) {
+        matriz[i] = (int *)malloc(N * sizeof(int));
+    }
+
+    // preenche a matriz com valores pseudo-aleatórios entre 1 e 9
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            matriz[i][j] = rand() % 9 + 1; // Números aleatórios de 1 a 9
+        }
+    }
+
+    return matriz;
+}
+
+// exibir uma matriz
+void exibirMatriz(int **matriz, int N) {
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// verificar se a soma dos elementos da diagonal principal é par ou ímpar
+void verificarSomaDiagonal(int **matriz, int N) {
+    int somaDiagonal = 0;
+
+    for (int i = 0; i < N; i++) {
+        somaDiagonal += matriz[i][i];
+    }
+
+    printf("Soma da diagonal principal: %d\n", somaDiagonal);
+
+    if (somaDiagonal % 2 == 0) {
+        printf("A soma da diagonal principal é par.\n");
+    } else {
+        printf("A soma da diagonal principal é ímpar.\n");
+    }
+}
+
+//  liberar a memória alocada para uma matriz
+void liberarMatriz(int **matriz, int N) {
+    for (int i = 0; i < N; i++) {
+        free(matriz[i]);
+    }
+    free(matriz);
+}
+
+int main() {
+    // inicializa o gerador de números pseudo-aleatórios com o tempo atual
+    srand(time(NULL));
+
+    // define a ordem da matriz (N x N)
+    int N;
+    printf("Digite a ordem da matriz N x N: ");
+    scanf("%d", &N);
+
+    // gera a matriz com valores aleatórios
+    int **matriz = gerarMatriz(N);
+
+    // exibe a matriz gerada
+    printf("\nMatriz Gerada:\n");
+    exibirMatriz(matriz, N);
+
+    // verifica se a soma dos elementos da diagonal principal é par ou ímpar
+    verificarSomaDiagonal(matriz, N);
+
+    // libera a memória alocada para a matriz
+    liberarMatriz(matriz, N);
+
+    return 0;
+}
+
+
+10.  #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+//gerar um número pseudoaleatório no intervalo [0, N-1]
+int gerarNumeroAleatorio(int N) {
+    return rand() % N;
+}
+
+// preencher um vetor com números pseudoaleatórios no intervalo [0, N-1]
+void gerarVetorAleatorio(int *vetor, int tamanho, int N) {
+    for (int i = 0; i < tamanho; i++) {
+        vetor[i] = gerarNumeroAleatorio(N);
+    }
+}
+
+// inicializar a matriz com coocorrências de X e Y
+void inicializarMatriz(int **matriz, int *vetorX, int *vetorY, int tamanho) {
+    for (int i = 0; i < tamanho; i++) {
+        for (int j = 0; j < tamanho; j++) {
+            if (vetorX[i] == vetorY[j]) {
+                matriz[i][j]++;
+            }
+        }
+    }
+}
+
+// exibir a matriz
+void exibirMatriz(int **matriz, int tamanho) {
+    for (int i = 0; i < tamanho; i++) {
+        for (int j = 0; j < tamanho; j++) {
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// liberar a memória alocada para a matriz
+void liberarMatriz(int **matriz, int tamanho) {
+    for (int i = 0; i < tamanho; i++) {
+        free(matriz[i]);
+    }
+    free(matriz);
+}
+
+int main() {
+    //iInicializa o gerador de números pseudoaleatórios com o tempo atual
+    srand(time(NULL));
+
+    // define o tamanho dos vetores e da matriz
+    int tamanho = 14; // Neste exemplo, N é 7
+
+    // aloca dinamicamente os vetores X e Y
+    int *vetorX = (int *)malloc(tamanho * sizeof(int));
+    int *vetorY = (int *)malloc(tamanho * sizeof(int));
+
+    // preenche os vetores X e Y com números pseudoaleatórios
+    gerarVetorAleatorio(vetorX, tamanho, 7);
+    gerarVetorAleatorio(vetorY, tamanho, 7);
+
+    // aloca dinamicamente a matriz M
+    int **matrizM = (int **)malloc(tamanho * sizeof(int *));
+    for (int i = 0; i < tamanho; i++) {
+        matrizM[i] = (int *)calloc(tamanho, sizeof(int));
+    }
+
+    // inicializa a matriz M com as coocorrências de X e Y
+    inicializarMatriz(matrizM, vetorX, vetorY, tamanho);
+
+    // exibe os vetores X e Y
+    printf("Vetor X: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", vetorX[i]);
+    }
+    printf("\n");
+
+    printf("Vetor Y: ");
+    for (int i = 0; i < tamanho; i++) {
+        printf("%d ", vetorY[i]);
+    }
+    printf("\n\n");
+
+    // exibe a matriz M
+    printf("Matriz M:\n");
+    exibirMatriz(matrizM, tamanho);
+
+    // libera a memória alocada para os vetores e a matriz
+    free(vetorX);
+    free(vetorY);
+    liberarMatriz(matrizM, tamanho);
+
+    return 0;
+}
