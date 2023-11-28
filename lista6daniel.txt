@@ -1,0 +1,220 @@
+01. #include <stdio.h>
+
+struct Aluno {
+    float nota1;
+    float nota2;
+    float media;
+};
+
+int main() {
+  
+    struct Aluno aluno;
+
+    printf("primeira nota: ");
+    scanf("%f", &aluno.nota1);
+
+    printf("segunda nota: ");
+    scanf("%f", &aluno.nota2);
+
+    // média
+    aluno.media = (aluno.nota1 + aluno.nota2) / 2;
+
+    printf("\nas notas digitadas: %.2f e %.2f\n", aluno.nota1, aluno.nota2);
+    printf("média: %.2f\n", aluno.media);
+
+    return 0;
+}
+
+02.  #include <stdio.h>
+
+struct Estoque {
+    char nomepeca[50];
+    int numeropeca;
+    float preco;
+    int numeropedido;
+};
+
+int main() {
+    struct Estoque estoque;
+
+    printf("nome da peça: ");
+    scanf("%s", estoque.nomepeca);
+
+    printf("número da peça: ");
+    scanf("%d", &estoque.numeropeca);
+
+    printf("preço da peça: ");
+    scanf("%f", &estoque.preco);
+
+    printf("número do pedido: ");
+    scanf("%d", &estoque.numeropedido);
+
+    printf("\ninfo da peça:\n");
+    printf("nome: %s\n", estoque.nomepeca);
+    printf("número da peça: %d\n", estoque.numeropeca);
+    printf("preço: %.2f\n", estoque.preco);
+    printf("número do pedido: %d\n", estoque.numeropedido);
+
+    return 0;
+}
+
+03.  #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// armazenar informações
+struct MatrizInfo {
+    int **matriz;
+    int linhas;
+    int colunas;
+    float media;
+};
+
+// gerar números aleatórios e calcular a média
+void gerarMatrizEMedia(struct MatrizInfo *info) {
+    // gerar semente para a função rand() usando o tempo atual
+    srand(time(NULL));
+
+    // alocação de memória p/ matriz
+    info->matriz = (int **)malloc(info->linhas * sizeof(int *));
+    for (int i = 0; i < info->linhas; i++) {
+        info->matriz[i] = (int *)malloc(info->colunas * sizeof(int));
+    }
+
+    // números aleatórios entre 1 e 100 p/ matriz
+    for (int i = 0; i < info->linhas; i++) {
+        for (int j = 0; j < info->colunas; j++) {
+            info->matriz[i][j] = rand() % 100 + 1;
+        }
+    }
+
+    // média
+    float soma = 0;
+    for (int i = 0; i < info->linhas; i++) {
+        for (int j = 0; j < info->colunas; j++) {
+            soma += info->matriz[i][j];
+        }
+    }
+    info->media = soma / (info->linhas * info->colunas);
+}
+
+
+int main() {
+    struct MatrizInfo info;
+  
+    printf("Digite o número de linhas da matriz: ");
+    scanf("%d", &info.linhas);
+
+    printf("Digite o número de colunas da matriz: ");
+    scanf("%d", &info.colunas);
+
+    gerarMatrizEMedia(&info);
+
+    printf("Matriz gerada:\n");
+    for (int i = 0; i < info.linhas; i++) {
+        for (int j = 0; j < info.colunas; j++) {
+            printf("%d ", info.matriz[i][j]);
+        }
+        printf("\n");
+    }
+
+    printf("Média dos elementos: %.2f\n", info.media);
+
+    // liberar memória alocada p/ matriz
+    for (int i = 0; i < info.linhas; i++) {
+        free(info.matriz[i]);
+    }
+    free(info.matriz);
+
+    return 0;
+}
+
+
+
+
+04.    #include <stdio.h>
+
+// estrutura aluno
+struct Aluno {
+    float nota1;
+    float nota2;
+    float media;
+};
+
+// média de um aluno por função
+float calcularMedia(struct Aluno *aluno) {
+    return (aluno->nota1 + aluno->nota2) / 2;
+}
+
+int main() {
+    // array de 3 alunos
+    struct Aluno alunos[3];
+
+    for (int i = 0; i < 3; i++) {
+        printf("Digite a primeira nota do aluno %d: ", i + 1);
+        scanf("%f", &alunos[i].nota1);
+
+        printf("Digite a segunda nota do aluno %d: ", i + 1);
+        scanf("%f", &alunos[i].nota2);
+
+        // média usando a função
+        alunos[i].media = calcularMedia(&alunos[i]);
+    }
+
+    printf("\nResultados:\n");
+    for (int i = 0; i < 3; i++) {
+        printf("Aluno %d - Notas: %.2f e %.2f, Média: %.2f\n", i + 1, alunos[i].nota1, alunos[i].nota2, alunos[i].media);
+    }
+
+    return 0;
+}
+
+
+05.  #include <stdio.h>
+
+// estrutura Professor
+struct Professor {
+    char nome[50];
+    int idade;
+    char disciplina[50];
+};
+
+// estrutura Disciplina que inclui um Professor
+struct Disciplina {
+    char nome[50];
+    int codigo;
+    struct Professor responsavel;
+};
+
+int main() {
+    // variável do tipo Disciplina
+    struct Disciplina disciplina;
+
+   
+    printf("nome da disciplina: ");
+    scanf("%s", disciplina.nome);
+
+    printf("código da disciplina: ");
+    scanf("%d", &disciplina.codigo);
+
+  
+    printf("nome do professor responsável: ");
+    scanf("%s", disciplina.responsavel.nome);
+
+    printf("idade do professor responsável: ");
+    scanf("%d", &disciplina.responsavel.idade);
+
+    printf("disciplina que o professor ministra: ");
+    scanf("%s", disciplina.responsavel.disciplina);
+
+  
+    printf("\ninfos da disciplina:\n");
+    printf("nome: %s\n", disciplina.nome);
+    printf("código: %d\n", disciplina.codigo);
+    printf("professor Responsável:\n");
+    printf("  nome: %s\n", disciplina.responsavel.nome);
+    printf("  idade: %d\n", disciplina.responsavel.idade);
+    printf("  disciplina ministrada: %s\n", disciplina.responsavel.disciplina);
+
+    return 0;
+}
