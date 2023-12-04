@@ -1,0 +1,344 @@
+#include <stdio.h>   (best fit)
+#include <stdlib.h>
+#include <time.h>
+
+#define TAMANHO_MAXIMO 100 // Tamanho da memória
+
+struct BlocoMemoria {
+    unsigned char status; // 0 se livre, 1 se ocupado
+    unsigned int posicao; // Posição
+    unsigned int tamanho; // Tamanho do bloco
+    struct BlocoMemoria *proximo; // Ponteiro para o próximo bloco
+};
+
+// Declarações de funções
+void preencherMemoria(unsigned int, unsigned int, struct BlocoMemoria*);
+struct BlocoMemoria *inserirBloco(unsigned int, unsigned int, struct BlocoMemoria*);
+void imprimirMemoria(struct BlocoMemoria*);
+void polimento(struct BlocoMemoria*);
+struct BlocoMemoria *buscarMelhorEncaixe(struct BlocoMemoria*, unsigned int);
+void alocarMemoria(struct BlocoMemoria*, unsigned int);
+void liberarMemoria(struct BlocoMemoria*);
+
+int main() {
+    srand(time(NULL));
+
+    struct BlocoMemoria cabeca;
+    cabeca.proximo = NULL;
+
+    unsigned int tamanhoRequisitado = 1;
+
+    preencherMemoria(0, TAMANHO_MAXIMO, &cabeca);
+    imprimirMemoria(&cabeca);
+
+    // Condição de saída: requisitar 0
+    while (tamanhoRequisitado) {
+        puts("\n");
+        puts("Insira a quantidade desejada a alocar:");
+        scanf("%d", &tamanhoRequisitado);
+
+        alocarMemoria(&cabeca, tamanhoRequisitado);
+        imprimirMemoria(&cabeca);
+    }
+
+    liberarMemoria(&cabeca);
+
+    return 0;
+}
+
+// Implementações de funções
+
+void preencherMemoria(unsigned int posInicial, unsigned int tamanhoMaximo, struct BlocoMemoria *inicio) {
+    unsigned int espacoTotal = tamanhoMaximo;
+    unsigned int pos = posInicial;
+
+    struct BlocoMemoria *auxiliar = inicio;
+
+    unsigned int tamBloco;
+
+    while (espacoTotal > 1) {
+        tamBloco = rand() % espacoTotal;
+        auxiliar = inserirBloco(pos, tamBloco, auxiliar);
+        auxiliar->status = rand() % 2;
+        pos += tamBloco;
+        espacoTotal -= tamBloco;
+    }
+
+    polimento(inicio);
+    polimento(inicio);
+    polimento(inicio);
+}
+
+struct BlocoMemoria *inserirBloco(unsigned int posicao, unsigned int tamanho, struct BlocoMemoria *anterior) {
+    struct BlocoMemoria *novoBloco = malloc(sizeof(struct BlocoMemoria));
+    if (!novoBloco) {
+        puts("Não há memória disponível (ISSO NÃO É SIMULAÇÃO)");
+        exit(1);
+    }
+    novoBloco->posicao = posicao;
+    novoBloco->tamanho = tamanho;
+    novoBloco->proximo = anterior->proximo;
+    anterior->proximo = novoBloco;
+
+    return novoBloco;
+}
+
+void imprimirMemoria(struct BlocoMemoria *inicio) {
+    struct BlocoMemoria *blocoAtual = inicio->proximo;
+
+    for (; blocoAtual != NULL; blocoAtual = blocoAtual->proximo) {
+        printf("STATUS: %hhu POS: %u; TAM: %u; PROX: %p\n", blocoAtual->status, blocoAtual->posicao, blocoAtual->tamanho, blocoAtual->proximo);
+    }
+}
+
+void polimento(struct BlocoMemoria *inicio) {
+    struct BlocoMemoria *blocoAtual = inicio;
+    struct BlocoMemoria *blocoAnterior;
+
+    while (blocoAtual->proximo != NULL) {
+        if (blocoAtual->proximo->tamanho == 0) {
+            blocoAnterior = blocoAtual;
+            blocoAtual = blocoAtual->proximo;
+            blocoAnterior->proximo = blocoAtual->proximo;
+            free(blocoAtual);
+        } else if (blocoAtual->proximo != NULL && blocoAtual->proximo->proximo != NULL) {
+            if (blocoAtual->proximo->status == 0 && blocoAtual->proximo->proximo->status == 0) {
+                blocoAnterior = blocoAtual->proximo;
+                blocoAtual->proximo->tamanho += blocoAtual->proximo->proximo->tamanho;
+                blocoAtual->proximo->proximo = blocoAtual->proximo->proximo->proximo;
+                free(blocoAnterior->proximo);
+            }
+        }
+        blocoAtual = blocoAtual->proximo;
+    }
+}
+
+struct BlocoMemoria *buscarMelhorEncaixe(struct BlocoMemoria *inicio, unsigned int tamReq) {
+    struct BlocoMemoria *blocoAtual = inicio;
+    struct BlocoMemoria *blocoAnterior = NULL;
+    unsigned int score;
+    unsigned int melhorScore = TAMANHO_MAXIMO;
+
+    for (; blocoAtual->proximo != NULL; blocoAtual = blocoAtual->proximo) {
+        if (blocoAtual->proximo->status == 0 && blocoAtual->proximo->tamanho >= tamReq) {
+            score = blocoAtual->proximo->tamanho - tamReq;
+            if (score < melhorScore) {
+                melhorScore = score;
+                blocoAnterior = blocoAtual;
+            }
+        }
+    }
+
+    return blocoAnterior;
+}
+
+void alocarMemoria(struct BlocoMemoria *inicio, unsigned int tamanho) {
+    struct BlocoMemoria *blocoAnterior = buscarMelhorEncaixe(inicio, tamanho);
+
+    if (!blocoAnterior) {
+        printf("Não há memória disponível para alocar %uB (SIMULAÇÃO)\n", tamanho);
+    } else {
+        struct BlocoMemoria *novoBloco = inserirBloco(blocoAnterior->proximo->posicao, tamanho, blocoAnterior);
+
+        if (novoBloco->proximo != NULL) {
+            novoBloco->proximo->posicao += tamanho;
+            novoBloco->proximo->tamanho -= tamanho;
+        }
+
+        if (novoBloco != NULL) {
+            novoBloco->status = 1;
+        }
+
+        polimento(inicio);
+    }
+}
+
+void liberarMemoria(struct BlocoMemoria *inicio) {
+    struct BlocoMemoria *blocoAtual = inicio->proximo;
+    struct BlocoMemoria *blocoAnterior;
+
+    while (blocoAtual != NULL) {
+        blocoAnterior = blocoAtual;
+        blocoAtual = blocoAtual->proximo;
+        free(blocoAnterior);
+    }
+
+
+
+
+(fist fit)
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define TAMANHO_MAXIMO 100 
+
+struct BlocoMemoria {
+    unsigned char ocupado; // 0 se livre, 1 se ocupado
+    unsigned int posicao; // posição
+    unsigned int tamanho; // tamanho do bloco 
+    struct BlocoMemoria *proximo; // ponteiro p/ proximo bloco
+};
+
+void inicializarMemoria(unsigned int, unsigned int, struct BlocoMemoria*);
+
+void inserirBloco(unsigned int, unsigned int, struct BlocoMemoria*);
+
+void imprimirMemoria(struct BlocoMemoria*);
+
+void otimizarMemoria(struct BlocoMemoria*);
+
+struct BlocoMemoria *encontrarPrimeiroAjuste(struct BlocoMemoria*, unsigned int);
+
+void alocarBlocoMemoria(struct BlocoMemoria*, unsigned int);
+
+void liberarEspacoMemoria(struct BlocoMemoria*);
+
+int main()
+{
+    srand(time(NULL));
+
+    struct BlocoMemoria cabecalho;
+    cabecalho.proximo = NULL;
+
+    unsigned int tamanhoRequisitado = 1;
+
+    inicializarMemoria(0, TAMANHO_MAXIMO, &cabecalho);
+    imprimirMemoria(&cabecalho);
+
+    
+    while (tamanhoRequisitado) {
+        puts("\n");
+        puts("Insira a quantidade desejada para alocar:");
+        scanf("%d", &tamanhoRequisitado);
+
+        alocarBlocoMemoria(&cabecalho, tamanhoRequisitado);
+        imprimirMemoria(&cabecalho);
+    }
+
+    liberarEspacoMemoria(&cabecalho);
+
+    return 0;
+}
+
+void inicializarMemoria(unsigned int posicaoInicial, unsigned int tamanhoMaximo, struct BlocoMemoria *cabecalho)
+{
+    unsigned int espacoTotal = tamanhoMaximo;
+    unsigned int posicao = posicaoInicial;
+
+    struct BlocoMemoria *auxiliar = cabecalho;
+
+    unsigned int tamanhoBloco;
+
+    while (espacoTotal > 1) {
+        tamanhoBloco = rand() % espacoTotal;
+        inserirBloco(posicao, tamanhoBloco, auxiliar);
+
+        auxiliar = auxiliar->proximo;
+        auxiliar->ocupado = rand() % 2;
+        posicao += tamanhoBloco;
+        espacoTotal -= tamanhoBloco;
+
+        
+        printf("%u\n", espacoTotal);
+    }
+
+    otimizarMemoria(cabecalho);
+    otimizarMemoria(cabecalho); 
+    otimizarMemoria(cabecalho);
+}
+
+void inserirBloco(unsigned int posicao, unsigned int tamanho, struct BlocoMemoria *anterior)
+{
+    struct BlocoMemoria *novoBloco = NULL;
+    novoBloco = malloc(sizeof(struct BlocoMemoria));
+    if (!novoBloco) {
+        puts("Não há memória disponível (ISSO NÃO É SIMULAÇÃO)");
+        exit(1);
+    }
+    novoBloco->posicao = posicao;
+    novoBloco->tamanho = tamanho;
+    novoBloco->proximo = anterior->proximo;
+    anterior->proximo = novoBloco;
+}
+
+void imprimirMemoria(struct BlocoMemoria *cabecalho)
+{
+    struct BlocoMemoria *atual = cabecalho;
+
+    for (atual = cabecalho->proximo; atual != NULL; atual = atual->proximo) {
+        printf("STATUS: %hhu POS: %u; TAM: %u; PROX: %p\n", atual->ocupado, atual->posicao, atual->tamanho, atual->proximo);
+    }
+}
+
+void otimizarMemoria(struct BlocoMemoria *cabecalho)
+{
+    struct BlocoMemoria *atual = cabecalho;
+    struct BlocoMemoria *anterior; 
+
+    while (atual->proximo != NULL) {
+        if (atual->proximo->tamanho == 0) { 
+            anterior = atual;
+            anterior->proximo = atual->proximo->proximo;
+            free(atual->proximo);
+        } else if ((atual->proximo != NULL) && (atual->proximo->proximo != NULL)) {
+            if ((atual->proximo->ocupado == 0) && (atual->proximo->proximo->ocupado == 0)) {
+                anterior = atual;
+                anterior->proximo->tamanho += atual->proximo->proximo->tamanho;
+                anterior->proximo->proximo = atual->proximo->proximo->proximo;
+                free(atual->proximo->proximo);
+            }
+        }
+        atual = atual->proximo;
+        if (atual == NULL) break;
+    }
+}
+
+struct BlocoMemoria *encontrarPrimeiroAjuste(struct BlocoMemoria *cabecalho, unsigned int tamRequisitado)
+{
+    struct BlocoMemoria *atual;
+
+    for (atual = cabecalho; atual->proximo != NULL; atual = atual->proximo) {
+        if ((atual->proximo->ocupado == 0) && (atual->proximo->tamanho >= tamRequisitado)) {
+            return atual;
+        }
+    }
+    return NULL;
+}
+
+void alocarBlocoMemoria(struct BlocoMemoria *cabecalho, unsigned int tamanho)
+{
+    struct BlocoMemoria *blocoAnterior = encontrarPrimeiroAjuste(cabecalho, tamanho);
+
+    if (!blocoAnterior) {
+        printf("Não há memória disponível para alocar %uB (SIMULAÇÃO)\n", tamanho);
+    } else {
+        inserirBloco(blocoAnterior->proximo->posicao, tamanho, blocoAnterior);
+
+        if (blocoAnterior->proximo->proximo != NULL) {
+            blocoAnterior->proximo->proximo->posicao += tamanho;
+            blocoAnterior->proximo->proximo->tamanho -= tamanho;
+        }
+        if (blocoAnterior->proximo != NULL) {
+            blocoAnterior->proximo->ocupado = 1;
+        }
+        otimizarMemoria(cabecalho);
+    }
+}
+
+void liberarEspacoMemoria(struct BlocoMemoria *cabecalho)
+{
+    struct BlocoMemoria *atual = cabecalho->proximo;
+    struct BlocoMemoria *anterior; 
+
+    while (atual != NULL) {
+        anterior = atual;
+        atual = atual->proximo;
+        free(anterior);
+    }
+}
+
+
+
+}
