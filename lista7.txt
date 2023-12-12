@@ -1,0 +1,203 @@
+01.  #include <stdio.h>
+
+int main() {
+    FILE *arquivo;
+    char nome[50], email[50], telefone[15];
+
+    // arquivo CSV p/ escrita (se não existir, será criado; se existir, será sobrescrito)
+    arquivo = fopen("usuarios.csv", "w");
+
+    if (arquivo == NULL) {
+        printf("erro p/ abrir arquivo.\n");
+        return 1;
+    }
+
+    // cabeçalho do arquivo
+    fprintf(arquivo, "nome,email,telefone\n");
+
+    // loop p/ dados de diferentes usuários
+    while (1) {
+        // solicita dados do usuário
+        printf("nome do usuário (ou 'sair' para encerrar): ");
+        scanf("%s", nome);
+
+        // verifica se o usuário deseja sair
+        if (strcmp(nome, "sair") == 0) {
+            break;
+        }
+
+        printf("email do usuário: ");
+        scanf("%s", email);
+
+        printf("elefone do usuário: ");
+        scanf("%s", telefone);
+
+        // escreve os dados no arquivo CSV
+        fprintf(arquivo, "%s,%s,%s\n", nome, email, telefone);
+    }
+
+    // fecha o arquivo
+    fclose(arquivo);
+
+    printf("dados gravados com sucesso no arquivo usuarios.csv.\n");
+
+    return 0;
+}
+
+
+02.  #include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_REGISTROS 100
+
+struct Ferramenta {
+    int registro;
+    char nome[50];
+    int quantidade;
+    float custo;
+};
+
+void inicializarArquivo() {
+    FILE *arquivo = fopen("hardware.dat", "wb");
+    if (arquivo == NULL) {
+        perror("erro p/ abrir arquivo");
+        exit(EXIT_FAILURE);
+    }
+
+    struct Ferramenta ferramentaVazia = {0, "", 0, 0.0};
+    for (int i = 0; i < MAX_REGISTROS; i++) {
+        fwrite(&ferramentaVazia, sizeof(struct Ferramenta), 1, arquivo);
+    }
+
+    fclose(arquivo);
+}
+
+void listarFerramentas() {
+    FILE *arquivo = fopen("hardware.dat", "rb");
+    if (arquivo == NULL) {
+        perror("erro p/ abrir arquivo");
+        exit(EXIT_FAILURE);
+    }
+
+    struct Ferramenta ferramenta;
+    fseek(arquivo, 0, SEEK_SET);
+
+    printf("registro\tnome\tquantidade\tcusto\n");
+
+    while (fread(&ferramenta, sizeof(struct Ferramenta), 1, arquivo) == 1) {
+        if (ferramenta.registro != 0) {
+            printf("%d\t\t%s\t%d\t\t%.2f\n", ferramenta.registro, ferramenta.nome, ferramenta.quantidade, ferramenta.custo);
+        }
+    }
+
+    fclose(arquivo);
+}
+
+void inserirFerramenta() {
+    FILE *arquivo = fopen("hardware.dat", "r+b");
+    if (arquivo == NULL) {
+        perror("erro p/ abrir arquivo");
+        exit(EXIT_FAILURE);
+    }
+
+    struct Ferramenta novaFerramenta;
+
+    printf("registro da ferramenta: ");
+    scanf("%d", &novaFerramenta.registro);
+
+    printf("nome da ferramenta: ");
+    scanf("%s", novaFerramenta.nome);
+
+    printf("quantidade: ");
+    scanf("%d", &novaFerramenta.quantidade);
+
+    printf("custo: ");
+    scanf("%f", &novaFerramenta.custo);
+
+    fseek(arquivo, (novaFerramenta.registro - 1) * sizeof(struct Ferramenta), SEEK_SET);
+    fwrite(&novaFerramenta, sizeof(struct Ferramenta), 1, arquivo);
+
+    fclose(arquivo);
+}
+
+void excluirFerramenta() {
+    FILE *arquivo = fopen("hardware.dat", "r+b");
+    if (arquivo == NULL) {
+        perror("erro p/ abrir arquivo");
+        exit(EXIT_FAILURE);
+    }
+
+    int registro;
+    printf("registro da ferramenta a ser excluída: ");
+    scanf("%d", &registro);
+
+    struct Ferramenta ferramentaVazia = {0, "", 0, 0.0};
+    fseek(arquivo, (registro - 1) * sizeof(struct Ferramenta), SEEK_SET);
+    fwrite(&ferramentaVazia, sizeof(struct Ferramenta), 1, arquivo);
+
+    fclose(arquivo);
+}
+
+void atualizarFerramenta() {
+    FILE *arquivo = fopen("hardware.dat", "r+b");
+    if (arquivo == NULL) {
+        perror("erro p/ abrir arquivo");
+        exit(EXIT_FAILURE);
+    }
+
+    int registro;
+    printf("registro da ferramenta a ser atualizada: ");
+    scanf("%d", &registro);
+
+    struct Ferramenta novaFerramenta;
+
+    printf("novo nome: ");
+    scanf("%s", novaFerramenta.nome);
+
+    printf("nova quantidade: ");
+    scanf("%d", &novaFerramenta.quantidade);
+
+    printf("novo custo: ");
+    scanf("%f", &novaFerramenta.custo);
+
+    fseek(arquivo, (registro - 1) * sizeof(struct Ferramenta), SEEK_SET);
+    fwrite(&novaFerramenta, sizeof(struct Ferramenta), 1, arquivo);
+
+    fclose(arquivo);
+}
+
+int main() {
+    inicializarArquivo();
+
+    while (1) {
+        int escolha;
+        printf("\n1. listar ferramentas\n");
+        printf("2. inserir ferramenta\n");
+        printf("3. excluir ferramenta\n");
+        printf("4. atualizar ferramenta\n");
+        printf("5. sair\n");
+        printf("escolha: ");
+        scanf("%d", &escolha);
+
+        switch (escolha) {
+            case 1:
+                listarFerramentas();
+                break;
+            case 2:
+                inserirFerramenta();
+                break;
+            case 3:
+                excluirFerramenta();
+                break;
+            case 4:
+                atualizarFerramenta();
+                break;
+            case 5:
+                exit(EXIT_SUCCESS);
+            default:
+                printf("Opção inválida\n");
+        }
+    }
+
+    return 0;
+}
